@@ -23,7 +23,7 @@ export default function Footer() {
                   />
                 </svg>
               </div>
-              <span className="text-lg font-bold text-white">DION</span>
+              <span className="text-lg font-bold text-white">Miami Lifestyle Watersports</span>
             </div>
             <p className="text-sm text-slate-400 max-w-md">
               Premium watersports experiences on the water. From jet skis to
@@ -78,21 +78,21 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-2 text-sm text-slate-400">
               <li>123 Marina Boulevard</li>
-              <li>Oceanside, FL 33019</li>
+              <li>Miami, FL 33139</li>
               <li className="pt-2">
                 <a
-                  href="tel:+15551234567"
+                  href="tel:+13055551234"
                   className="hover:text-white transition-colors"
                 >
-                  (555) 123-4567
+                  (305) 555-1234
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:hello@dionwatersports.com"
+                  href="mailto:info@miamilifestylewatersports.com"
                   className="hover:text-white transition-colors"
                 >
-                  hello@dionwatersports.com
+                  info@miamilifestylewatersports.com
                 </a>
               </li>
             </ul>
@@ -102,7 +102,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-slate-800 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} Dion Watersports. All rights
+            &copy; {new Date().getFullYear()} Miami Lifestyle Watersports. All rights
             reserved.
           </p>
           <div className="flex gap-6">

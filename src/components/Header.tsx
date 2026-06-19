@@ -28,7 +28,7 @@ export default function Header() {
               </svg>
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
-              DION
+              Miami Lifestyle Watersports
             </span>
           </Link>
 

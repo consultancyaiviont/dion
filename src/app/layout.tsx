@@ -15,16 +15,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dion Watersports — Jet Ski Rentals & Watersport Adventures",
+  title: "Miami Lifestyle Watersports — Jet Ski Rentals & Watersport Adventures",
   description:
-    "Book jet ski rentals, parasailing, tubing, kayaking, and sunset tours. Premium watersport experiences with easy online booking and secure payment.",
+    "Book jet ski rentals, parasailing, tubing, kayaking, and sunset tours in Miami. Premium watersport experiences with easy online booking and secure payment.",
   keywords: [
-    "jet ski rental",
-    "watersports",
-    "parasailing",
-    "boat tours",
-    "water activities",
-    "beach activities",
+    "jet ski rental Miami",
+    "Miami watersports",
+    "parasailing Miami",
+    "boat tours Miami",
+    "water activities Miami",
+    "beach activities Miami",
   ],
 };
 
