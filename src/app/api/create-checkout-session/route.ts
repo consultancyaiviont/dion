@@ -9,6 +9,8 @@ export async function POST(request: NextRequest) {
       serviceId,
       serviceName,
       price,
+      totalPrice,
+      paymentType,
       guests,
       date,
       timeSlot,
@@ -60,8 +62,9 @@ export async function POST(request: NextRequest) {
       apiVersion: "2026-05-27.dahlia",
     });
 
-    const totalAmount = price * guests;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const isDeposit = paymentType === "deposit";
+    const balanceDue = isDeposit ? totalPrice - price : 0;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -70,16 +73,17 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: serviceName,
-              description: `${guests} guest${guests > 1 ? "s" : ""} on ${new Date(date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })} at ${timeSlot}`,
+              name: `${serviceName}${isDeposit ? " (Deposit)" : ""}`,
+              description: `${guests} guest${guests > 1 ? "s" : ""} on ${new Date(date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })} at ${timeSlot}${isDeposit ? ` - Balance of $${(balanceDue / 100).toFixed(2)} due on arrival` : ""}`,
               metadata: {
                 serviceId,
                 date,
                 timeSlot,
                 guests: guests.toString(),
+                paymentType: paymentType || "full",
               },
             },
-            unit_amount: totalAmount,
+            unit_amount: price,
           },
           quantity: 1,
         },
@@ -98,6 +102,9 @@ export async function POST(request: NextRequest) {
         customerPhone: customerPhone || "",
         specialRequests: specialRequests || "",
         guests: guests.toString(),
+        paymentType: paymentType || "full",
+        totalPrice: totalPrice.toString(),
+        balanceDue: balanceDue.toString(),
       },
     });
 

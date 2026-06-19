@@ -13,6 +13,9 @@ export interface BookingDetails {
   guests: number;
   amountPaid: number;
   specialRequests?: string;
+  paymentType?: string;
+  totalPrice?: number;
+  balanceDue?: number;
 }
 
 export async function sendCustomerConfirmation(booking: BookingDetails) {
@@ -133,13 +136,27 @@ function getCustomerEmailHTML(booking: BookingDetails): string {
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding: 12px 0;">
-                    <span style="color: #64748b; font-size: 14px;">Total Paid</span>
+                  <td style="padding: 12px 0; ${booking.paymentType === 'deposit' ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
+                    <span style="color: #64748b; font-size: 14px;">${booking.paymentType === 'deposit' ? 'Deposit Paid' : 'Total Paid'}</span>
                   </td>
-                  <td style="padding: 12px 0; text-align: right;">
+                  <td style="padding: 12px 0; text-align: right; ${booking.paymentType === 'deposit' ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
                     <span style="color: #0ea5e9; font-size: 18px; font-weight: bold;">$${booking.amountPaid.toFixed(2)}</span>
                   </td>
                 </tr>
+                ${
+                  booking.paymentType === "deposit" && booking.balanceDue
+                    ? `
+                <tr>
+                  <td style="padding: 12px 0;">
+                    <span style="color: #64748b; font-size: 14px;">Balance Due on Arrival</span>
+                  </td>
+                  <td style="padding: 12px 0; text-align: right;">
+                    <span style="color: #f59e0b; font-size: 18px; font-weight: bold;">$${((booking.balanceDue) / 100).toFixed(2)}</span>
+                  </td>
+                </tr>
+                `
+                    : ""
+                }
               </table>
 
               ${
@@ -168,6 +185,11 @@ function getCustomerEmailHTML(booking: BookingDetails): string {
               <h3 style="margin: 24px 0 16px 0; color: #0f172a; font-size: 18px; font-weight: 600;">⏰ What to Know</h3>
               <ul style="margin: 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.8;">
                 <li>Please arrive 15 minutes before your scheduled time</li>
+                ${
+                  booking.paymentType === "deposit" && booking.balanceDue
+                    ? `<li><strong>Bring $${((booking.balanceDue) / 100).toFixed(2)} for remaining balance (cash or card accepted)</strong></li>`
+                    : ""
+                }
                 <li>Bring a valid ID and your confirmation number</li>
                 <li>Wear swimwear and bring sunscreen</li>
                 <li>Life jackets and safety equipment provided</li>
@@ -266,13 +288,27 @@ function getBusinessEmailHTML(booking: BookingDetails): string {
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding: 12px 0;">
-                    <span style="color: #64748b; font-size: 14px;">Amount Paid</span>
+                  <td style="padding: 12px 0; ${booking.paymentType === 'deposit' ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
+                    <span style="color: #64748b; font-size: 14px;">${booking.paymentType === 'deposit' ? 'Deposit Received' : 'Amount Paid'}</span>
                   </td>
-                  <td style="padding: 12px 0; text-align: right;">
+                  <td style="padding: 12px 0; text-align: right; ${booking.paymentType === 'deposit' ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
                     <span style="color: #10b981; font-size: 18px; font-weight: bold;">$${booking.amountPaid.toFixed(2)}</span>
                   </td>
                 </tr>
+                ${
+                  booking.paymentType === "deposit" && booking.balanceDue
+                    ? `
+                <tr>
+                  <td style="padding: 12px 0;">
+                    <span style="color: #64748b; font-size: 14px;">Balance Due on Arrival</span>
+                  </td>
+                  <td style="padding: 12px 0; text-align: right;">
+                    <span style="color: #f59e0b; font-size: 18px; font-weight: bold;">$${((booking.balanceDue) / 100).toFixed(2)}</span>
+                  </td>
+                </tr>
+                `
+                    : ""
+                }
               </table>
 
               <h3 style="margin: 24px 0 16px 0; color: #0f172a; font-size: 18px; font-weight: 600;">Customer Information</h3>

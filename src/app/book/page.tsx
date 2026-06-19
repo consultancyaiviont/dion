@@ -46,6 +46,7 @@ function BookingPageContent() {
     specialRequests: "",
   });
   const [formErrors, setFormErrors] = useState<ValidationErrors>({});
+  const [paymentType, setPaymentType] = useState<"full" | "deposit">("full");
   const [isLoading, setIsLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
@@ -112,6 +113,12 @@ function BookingPageContent() {
     setIsLoading(true);
     setPaymentError(null);
 
+    // Calculate deposit amount (50% or $50 minimum)
+    const totalPrice = selectedService.price * formData.guests;
+    const depositAmount = paymentType === "deposit"
+      ? Math.max(Math.round(totalPrice * 0.5), 5000) // 50% or $50 minimum (in cents)
+      : totalPrice;
+
     try {
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -119,7 +126,9 @@ function BookingPageContent() {
         body: JSON.stringify({
           serviceId: selectedService.id,
           serviceName: selectedService.name,
-          price: selectedService.price,
+          price: depositAmount,
+          totalPrice: totalPrice,
+          paymentType: paymentType,
           guests: formData.guests,
           date: selectedDate.toISOString(),
           timeSlot: selectedTimeSlot.display,
@@ -149,7 +158,7 @@ function BookingPageContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedService, selectedDate, selectedTimeSlot, formData]);
+  }, [selectedService, selectedDate, selectedTimeSlot, formData, paymentType]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -290,6 +299,74 @@ function BookingPageContent() {
                   timeSlot={selectedTimeSlot}
                   formData={formData}
                 />
+
+                {/* Payment Type Selection */}
+                <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <h3 className="text-sm font-semibold text-slate-900 mb-3">
+                    Payment Option
+                  </h3>
+                  <div className="space-y-3">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="radio"
+                        name="paymentType"
+                        value="full"
+                        checked={paymentType === "full"}
+                        onChange={(e) => setPaymentType(e.target.value as "full" | "deposit")}
+                        className="mt-0.5 w-4 h-4 text-sky-600 focus:ring-sky-500"
+                      />
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-slate-900 group-hover:text-sky-600">
+                          Pay Full Amount Now
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          Complete payment today - ${((selectedService.price * formData.guests) / 100).toFixed(2)}
+                        </div>
+                      </div>
+                    </label>
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="radio"
+                        name="paymentType"
+                        value="deposit"
+                        checked={paymentType === "deposit"}
+                        onChange={(e) => setPaymentType(e.target.value as "full" | "deposit")}
+                        className="mt-0.5 w-4 h-4 text-sky-600 focus:ring-sky-500"
+                      />
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-slate-900 group-hover:text-sky-600">
+                          Pay Deposit Now (50%)
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          Pay ${(Math.max(Math.round((selectedService.price * formData.guests) * 0.5), 5000) / 100).toFixed(2)} now, remaining ${((selectedService.price * formData.guests - Math.max(Math.round((selectedService.price * formData.guests) * 0.5), 5000)) / 100).toFixed(2)} due on arrival
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Cancellation Policy */}
+                <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-amber-900 mb-2">
+                        Cancellation & Rescheduling Policy
+                      </h4>
+                      <ul className="text-xs text-amber-800 space-y-1.5 leading-relaxed">
+                        <li>• {paymentType === "deposit" ? "Deposits are" : "Payments are"} non-refundable</li>
+                        <li>• If you arrive late, miss your reservation, or fail to show up, your {paymentType === "deposit" ? "deposit" : "payment"} will be forfeited</li>
+                        <li>• You may reschedule your booking for the next available opening, subject to availability</li>
+                        <li>• If weather or safety concerns prevent the activity, your booking will be rescheduled at no additional cost</li>
+                      </ul>
+                      <p className="text-xs text-amber-700 mt-2 font-medium">
+                        By completing this booking, you agree to these terms.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 {paymentError && (
                   <div className="mt-4 rounded-lg bg-red-50 border border-red-200 p-4">

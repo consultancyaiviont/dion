@@ -53,6 +53,9 @@ export async function POST(request: NextRequest) {
           guests: parseInt(session.metadata?.guests || "1"),
           amountPaid: (session.amount_total || 0) / 100,
           specialRequests: session.metadata?.specialRequests || "",
+          paymentType: session.metadata?.paymentType || "full",
+          totalPrice: parseInt(session.metadata?.totalPrice || "0"),
+          balanceDue: parseInt(session.metadata?.balanceDue || "0"),
         };
 
         // Send emails in parallel
