@@ -17,14 +17,30 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Miami Lifestyle Watersports — Jet Ski Rentals & Watersport Adventures",
   description:
-    "Book jet ski rentals, parasailing, tubing, kayaking, and sunset tours in Miami. Premium watersport experiences with easy online booking and secure payment.",
+    "Book jet ski rentals, parasailing, tubing, kayaking, yacht charters, and sunset tours in Miami. Premium watersport experiences with easy online booking and secure payment.",
   keywords: [
     "jet ski rental Miami",
+    "jetski Miami",
     "Miami watersports",
+    "water sports Miami",
+    "yacht rental Miami",
+    "yacht charter Miami",
     "parasailing Miami",
     "boat tours Miami",
+    "boat rental Miami",
+    "kayak rental Miami",
+    "paddleboard Miami",
     "water activities Miami",
     "beach activities Miami",
+    "jet ski tours Miami",
+    "waverunner rental Miami",
+    "banana boat Miami",
+    "tubing Miami",
+    "snorkeling Miami",
+    "Miami Beach watersports",
+    "South Beach jet ski",
+    "Miami lifestyle",
+    "water adventures Miami",
   ],
 };
 
