@@ -1,36 +1,146 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dion Watersports - Booking Website
+
+A production-ready booking website for a jet ski and watersports business, built with Next.js 16, TypeScript, Tailwind CSS, and Stripe.
+
+## Features
+
+- Multi-step booking flow (Activity > Date/Time > Details > Payment)
+- 8 watersport activities with pricing
+- Interactive calendar with date picker (react-day-picker)
+- Time slot selection with availability
+- Customer details form with validation
+- Stripe Checkout integration for secure payments
+- Booking confirmation page with payment verification
+- Fully responsive design (mobile + desktop)
+- Clean, modern UI with ocean/watersports theme
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4
+- **Payments:** Stripe Checkout
+- **Calendar:** react-day-picker
+- **Date Utilities:** date-fns
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm
+- A Stripe account (for payment processing)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/jadenyoung/dion.git
+cd dion
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+4. Add your Stripe keys to `.env.local`:
+
+```
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_KEY
+STRIPE_SECRET_KEY=sk_test_YOUR_KEY
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+5. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setting Up Stripe
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create an account at [stripe.com](https://stripe.com)
+2. Go to **Developers > API Keys** in the Stripe Dashboard
+3. Copy your **Publishable key** and **Secret key**
+4. For testing, use the test mode keys (prefixed with `pk_test_` and `sk_test_`)
+5. Add them to your `.env.local` file
 
-## Learn More
+### Test Card Numbers
 
-To learn more about Next.js, take a look at the following resources:
+Use these test card numbers in Stripe's checkout:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Card Number | Description |
+|---|---|
+| `4242 4242 4242 4242` | Succeeds |
+| `4000 0000 0000 3220` | Requires 3D Secure |
+| `4000 0000 0000 9995` | Declined |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use any future expiry date, any 3-digit CVC, and any billing ZIP.
 
-## Deploy on Vercel
+## Booking Flow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Select Activity** - Choose from 8 watersport experiences (jet ski, parasailing, tubing, kayak, banana boat, sunset tour, snorkel tour)
+2. **Pick Date & Time** - Interactive calendar with real-time slot availability
+3. **Enter Details** - Customer name, email, phone, number of guests, special requests
+4. **Review & Pay** - Summary of booking with total, then secure Stripe Checkout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Environment Variables
+
+| Variable | Description | Required |
+|---|---|---|
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable API key | Yes |
+| `STRIPE_SECRET_KEY` | Stripe secret API key | Yes |
+| `NEXT_PUBLIC_BASE_URL` | Base URL of the site | Yes |
+
+## Deployment
+
+This project is configured for Vercel deployment:
+
+1. Push to GitHub
+2. Import the repo in [Vercel](https://vercel.com)
+3. Add environment variables in Vercel project settings
+4. Deploy
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── create-checkout-session/  # Stripe session creation
+│   │   └── verify-payment/           # Payment verification
+│   ├── book/                         # Multi-step booking page
+│   ├── confirmation/                 # Post-payment confirmation
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx                      # Landing page
+├── components/
+│   ├── BookingForm.tsx               # Customer details form
+│   ├── BookingSummary.tsx            # Booking review card
+│   ├── DatePicker.tsx                # Calendar component
+│   ├── Footer.tsx
+│   ├── Header.tsx
+│   ├── ServiceCard.tsx               # Activity selection card
+│   ├── StepIndicator.tsx             # Progress steps
+│   └── TimeSlotPicker.tsx            # Time slot grid
+└── lib/
+    ├── services.ts                   # Service/activity data
+    ├── stripe.ts                     # Stripe server config
+    ├── time-slots.ts                 # Time slot generation
+    └── validation.ts                 # Form validation
+```
+
+## License
+
+Private - All rights reserved.
