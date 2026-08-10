@@ -1,65 +1,47 @@
-import { NextRequest } from "next/server";
-import Stripe from "stripe";
+import { NextRequest, NextResponse } from 'next/server'
+import { getStripe } from '@/lib/stripe-server'
+import { fulfillBooking } from '@/lib/booking-fulfillment'
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
+  const stripe = getStripe()
+  if (!stripe) return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 })
+
+  const sessionId = req.nextUrl.searchParams.get('session_id')
+  if (!sessionId) return NextResponse.json({ error: 'session_id required' }, { status: 400 })
+
   try {
-    const sessionId = request.nextUrl.searchParams.get("session_id");
+    const session = await stripe.checkout.sessions.retrieve(sessionId)
 
-    if (!sessionId) {
-      return Response.json(
-        { error: "Missing session_id parameter" },
-        { status: 400 }
-      );
+    if (session.payment_status !== 'paid') {
+      return NextResponse.json({ error: 'Payment not completed' }, { status: 402 })
     }
 
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-    if (!stripeSecretKey) {
-      return Response.json(
-        { error: "Stripe is not configured" },
-        { status: 500 }
-      );
-    }
+    // Backstop: the Stripe webhook is the primary path that saves the booking to
+    // Supabase and sends emails, but if it never fires (endpoint misconfigured,
+    // secret mismatch, delivery failure) the booking would otherwise vanish even
+    // though the customer paid. This call is idempotent against the webhook.
+    await fulfillBooking(session)
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2026-05-27.dahlia",
-    });
+    const meta = session.metadata ?? {}
+    const amountTotal = session.amount_total ?? 0
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    if (session.payment_status !== "paid") {
-      return Response.json(
-        { error: "Payment has not been completed" },
-        { status: 400 }
-      );
-    }
-
-    return Response.json({
-      success: true,
+    return NextResponse.json({
       booking: {
         id: session.id,
-        serviceName: session.metadata?.serviceName || "Unknown Service",
-        date: session.metadata?.date || "",
-        timeSlot: session.metadata?.timeSlot || "",
-        customerName: session.metadata?.customerName || "",
-        customerEmail: session.metadata?.customerEmail || session.customer_email || "",
-        guests: parseInt(session.metadata?.guests || "1"),
-        amountPaid: (session.amount_total || 0) / 100,
-        specialRequests: session.metadata?.specialRequests || "",
+        serviceName: meta.serviceName ?? meta.service ?? 'Rental',
+        date: meta.date ?? '',
+        timeSlot: meta.time ?? '',
+        customerName: meta.fullName ?? '',
+        customerEmail: session.customer_email ?? meta.email ?? '',
+        guests: parseInt(meta.guests ?? '1'),
+        amountPaid: amountTotal / 100,
+        deposit: parseFloat(meta.deposit ?? '0'),
+        totalPrice: parseFloat(meta.totalPrice ?? '0'),
+        notes: meta.notes ?? '',
       },
-    });
-  } catch (err) {
-    console.error("Payment verification error:", err);
-
-    if (err instanceof Stripe.errors.StripeError) {
-      return Response.json(
-        { error: err.message },
-        { status: err.statusCode || 500 }
-      );
-    }
-
-    return Response.json(
-      { error: "Failed to verify payment" },
-      { status: 500 }
-    );
+    })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Stripe error'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

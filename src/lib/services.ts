@@ -1,120 +1,113 @@
 export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  duration: number; // minutes
-  price: number; // cents
-  priceDisplay: string;
-  image: string;
-  maxGuests: number;
-  category: "jet-ski" | "water-sport" | "tour";
+  id: string
+  name: string
+  description: string
+  priceDisplay: string
+  depositDisplay: string
+  deposit: number // cents
+  image: string
+  maxGuests: number
+  category: 'jet-ski' | 'jet-car' | 'yacht'
+  hourly?: boolean
+  durationNote?: string
+  requiresBoatingLicense?: boolean
 }
 
 export const services: Service[] = [
   {
-    id: "jet-ski-30",
-    name: "Jet Ski Rental — 30 Minutes",
-    description:
-      "Experience the thrill of riding a jet ski across open water. Perfect for beginners and experienced riders alike. Includes safety briefing and life vest.",
-    duration: 30,
-    price: 7500,
-    priceDisplay: "$75",
-    image: "/services/jet-ski.jpg",
+    id: 'jet-ski',
+    name: 'Jet Ski Rental',
+    description: 'Feel the rush of Miami waters on a premium jet ski. Our high-powered personal watercraft put the thrill of Biscayne Bay right at your fingertips. Perfect for first-timers and seasoned riders alike.',
+    priceDisplay: '$140 / hr',
+    depositDisplay: '$40 deposit',
+    deposit: 4000,
+    image: '/images/jetski-action.png',
     maxGuests: 2,
-    category: "jet-ski",
+    category: 'jet-ski',
+    hourly: true,
+    durationNote: 'Hourly rental',
+    requiresBoatingLicense: true,
   },
   {
-    id: "jet-ski-60",
-    name: "Jet Ski Rental — 1 Hour",
-    description:
-      "Extended jet ski adventure with time to explore the coastline. Ride at your own pace and enjoy the freedom of the open water.",
-    duration: 60,
-    price: 12500,
-    priceDisplay: "$125",
-    image: "/services/jet-ski.jpg",
+    id: 'jet-car',
+    name: 'Jet Car Rental',
+    description: 'Experience the ultimate fusion of speed and luxury — the jet car is a one-of-a-kind water vehicle that turns heads and delivers an unforgettable Miami experience you can\'t find anywhere else.',
+    priceDisplay: '$350 / hr',
+    depositDisplay: '$80 deposit',
+    deposit: 8000,
+    image: '/images/jetcar-white.png',
     maxGuests: 2,
-    category: "jet-ski",
+    category: 'jet-car',
+    hourly: true,
+    durationNote: 'Hourly rental',
+    requiresBoatingLicense: true,
   },
   {
-    id: "parasailing",
-    name: "Parasailing Adventure",
-    description:
-      "Soar above the ocean and take in breathtaking panoramic views. Fly solo or tandem at heights up to 800 feet. An unforgettable aerial experience.",
-    duration: 45,
-    price: 9500,
-    priceDisplay: "$95",
-    image: "/services/parasailing.jpg",
-    maxGuests: 3,
-    category: "water-sport",
+    id: 'yacht-uniesse',
+    name: '80\' Uniesse — Foolish Pleasure',
+    description: 'The iconic Foolish Pleasure is the crown jewel of Miami luxury. This stunning 80-foot Uniesse offers an unmatched private charter experience on Biscayne Bay with breathtaking skyline views and premium amenities.',
+    priceDisplay: '$2,200 / 4 hrs',
+    depositDisplay: 'Deposit required',
+    deposit: 0,
+    image: 'https://cdn.aryeo.com/listings/2215-nw-14th-st-pier-a-miami-fl-33125-22234114/resized/large/large-019c697c-cb38-7257-8039-cdd5a2ccbf45.jpeg',
+    maxGuests: 13,
+    category: 'yacht',
+    durationNote: '4-hour charter',
   },
   {
-    id: "tubing",
-    name: "Tube Ride",
-    description:
-      "Hold on tight for an exciting ride on an inflatable tube towed behind our speedboat. Great fun for families and groups of all ages.",
-    duration: 30,
-    price: 5000,
-    priceDisplay: "$50",
-    image: "/services/tubing.jpg",
-    maxGuests: 4,
-    category: "water-sport",
+    id: 'yacht-churri',
+    name: 'Luxury Yacht — Churri',
+    description: 'The Churri is the pinnacle of Miami yacht experience. A spectacular vessel designed to impress — ideal for private parties, corporate events, or a lavish day on the water with the people who matter most.',
+    priceDisplay: '$3,700 / 4 hrs',
+    depositDisplay: 'Deposit required',
+    deposit: 0,
+    image: 'https://cdn.aryeo.com/listings/2215-nw-14th-st-pier-a-miami-fl-33125-22234114/resized/large/large-019c697c-c5fd-73fe-9417-3ad8a8d3719f.jpeg',
+    maxGuests: 13,
+    category: 'yacht',
+    durationNote: '4-hour charter',
   },
   {
-    id: "kayak",
-    name: "Kayak Rental — 1 Hour",
-    description:
-      "Paddle through calm, crystal-clear waters at your own pace. Single and tandem kayaks available. Perfect for exploring hidden coves and marine life.",
-    duration: 60,
-    price: 4000,
-    priceDisplay: "$40",
-    image: "/services/kayak.jpg",
-    maxGuests: 2,
-    category: "water-sport",
+    id: 'yacht-rayb50',
+    name: 'Ray B 50',
+    description: 'The Ray B 50 delivers a premium charter experience for those who want the luxury yacht lifestyle without compromise. Sleek lines, open deck, and Miami\'s stunning waters as your backdrop.',
+    priceDisplay: '$1,200 / 4 hrs',
+    depositDisplay: 'Deposit required',
+    deposit: 0,
+    image: 'https://cdn.aryeo.com/listings/2215-nw-14th-st-pier-a-miami-fl-33125-22234114/resized/large/large-019c697c-c1f2-7265-8eb4-e4488fa5fae1.jpeg',
+    maxGuests: 13,
+    category: 'yacht',
+    durationNote: '4-hour charter',
   },
   {
-    id: "banana-boat",
-    name: "Banana Boat Ride",
-    description:
-      "The ultimate group activity — climb aboard our banana boat for a wild ride across the waves. Laughs and splashes guaranteed.",
-    duration: 20,
-    price: 3500,
-    priceDisplay: "$35",
-    image: "/services/banana-boat.jpg",
-    maxGuests: 6,
-    category: "water-sport",
+    id: 'yacht-searay',
+    name: 'Sea Ray',
+    description: 'Classic American luxury on the water. The Sea Ray offers a refined charter experience perfect for intimate groups looking to explore Miami\'s coastline in style and comfort.',
+    priceDisplay: '$1,500 / 4 hrs',
+    depositDisplay: 'Deposit required',
+    deposit: 0,
+    image: 'https://cdn.aryeo.com/listings/2215-nw-14th-st-pier-a-miami-fl-33125-22234114/resized/large/large-019c697c-cce1-7336-983e-aa78dd7dd56d.jpeg',
+    maxGuests: 13,
+    category: 'yacht',
+    durationNote: '4-hour charter',
   },
   {
-    id: "sunset-tour",
-    name: "Sunset Boat Tour",
-    description:
-      "Cruise along the coast as the sun dips below the horizon. Includes complimentary refreshments and a narrated tour of local landmarks. A magical evening on the water.",
-    duration: 90,
-    price: 15000,
-    priceDisplay: "$150",
-    image: "/services/sunset-tour.jpg",
-    maxGuests: 10,
-    category: "tour",
+    id: 'yacht-flybridge',
+    name: 'Fly Bridge Navigator',
+    description: 'The Fly Bridge Navigator is a stunning 55-foot charter vessel with an elevated fly bridge offering 360° panoramic views of Miami. Perfect for those who want a premium experience with an unforgettable vantage point.',
+    priceDisplay: '$1,400 / 4 hrs',
+    depositDisplay: 'Deposit required',
+    deposit: 0,
+    image: 'https://cdn.aryeo.com/listings/2215-nw-14th-st-pier-a-miami-fl-33125-22234114/resized/large/large-019c697c-c469-715c-8bc2-73f2e9550edd.jpeg',
+    maxGuests: 13,
+    category: 'yacht',
+    durationNote: '4-hour charter',
   },
-  {
-    id: "snorkel-tour",
-    name: "Guided Snorkel Tour",
-    description:
-      "Discover vibrant coral reefs and tropical marine life with our experienced guides. All snorkeling gear included. Suitable for all skill levels.",
-    duration: 90,
-    price: 8500,
-    priceDisplay: "$85",
-    image: "/services/snorkel-tour.jpg",
-    maxGuests: 8,
-    category: "tour",
-  },
-];
+]
 
 export function getServiceById(id: string): Service | undefined {
-  return services.find((s) => s.id === id);
+  return services.find((s) => s.id === id)
 }
 
-export function getServicesByCategory(
-  category: Service["category"]
-): Service[] {
-  return services.filter((s) => s.category === category);
+export function getServicesByCategory(category: Service['category']): Service[] {
+  return services.filter((s) => s.category === category)
 }

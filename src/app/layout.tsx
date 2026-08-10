@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Miami Lifestyle Watersports — Jet Ski Rentals & Watersport Adventures",
+  title: "Miami Lifestyle Watersports | Jet Ski • Jet Car • Luxury Yacht Charters",
   description:
-    "Book jet ski rentals, parasailing, tubing, kayaking, yacht charters, and sunset tours in Miami. Premium watersport experiences with easy online booking and secure payment.",
+    "Book jet ski rentals, jet car rentals, and luxury yacht charters in Miami. Premium watersport experiences at 2400 Collins Ave, Miami Beach. Call (774) 823-4024.",
   keywords: [
     "jet ski rental Miami",
     "jetski Miami",
@@ -42,6 +42,31 @@ export const metadata: Metadata = {
     "Miami lifestyle",
     "water adventures Miami",
   ],
+  metadataBase: new URL("https://www.miamilifestylewatersports.com"),
+  openGraph: {
+    title: "Miami Lifestyle Watersports | Jet Ski • Jet Car • Luxury Yachts",
+    description:
+      "Miami's #1 watersports experience. Jet skis, jet cars & luxury yacht charters. Book online in minutes — deposits start at $40.",
+    url: "https://www.miamilifestylewatersports.com",
+    siteName: "Miami Lifestyle Watersports",
+    images: [
+      {
+        url: "/images/jetski-aerial.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Miami Lifestyle Watersports — Jet Ski on Miami waters",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Miami Lifestyle Watersports | Jet Ski • Jet Car • Luxury Yachts",
+    description:
+      "Miami's #1 watersports experience. Jet skis, jet cars & luxury yacht charters. Book online — deposits start at $40.",
+    images: ["/images/jetski-aerial.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -54,7 +79,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-slate-900">
+      <body className="min-h-full flex flex-col bg-[#0B0B0C] text-white">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
