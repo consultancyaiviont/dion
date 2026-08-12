@@ -3,7 +3,7 @@ import { getStripe } from '@/lib/stripe-server'
 
 const DEPOSITS: Record<string, number> = {
   'jet-ski': 40,
-  'jet-car': 80,
+  'jet-car': 100,
   'yacht-uniesse': 300,
   'yacht-churri': 500,
   'yacht-rayb50': 200,
@@ -11,11 +11,11 @@ const DEPOSITS: Record<string, number> = {
   'yacht-flybridge': 200,
 }
 
-// Double-rider bookings cost more even at quantity 1 (jet ski) or the same
-// total (jet car) — deposit needs to reflect that, not just the flat per-unit rate.
+// Double-rider bookings cost more even at quantity 1 (jet ski) — deposit
+// needs to reflect that, not just the flat per-unit rate. Jet car is a flat
+// $100/hr regardless of rider count, so it's intentionally absent here.
 const DOUBLE_RIDER_DEPOSITS: Record<string, number> = {
   'jet-ski': 70,
-  'jet-car': 100,
 }
 
 const SERVICE_LABELS: Record<string, string> = {
@@ -45,12 +45,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
-  const isDoubleRider = String(riderType) === 'double' && (service === 'jet-ski' || service === 'jet-car')
+  const isJetRental = service === 'jet-ski' || service === 'jet-car'
+  const isDoubleRider = String(riderType) === 'double' && isJetRental
   const baseDepositPerUnit = isDoubleRider
     ? (DOUBLE_RIDER_DEPOSITS[service] ?? DEPOSITS[service] ?? 50)
     : (DEPOSITS[service] ?? 50)
-  const qty = (service === 'jet-ski' || service === 'jet-car') ? Math.max(1, Number(quantity) || 1) : 1
-  const depositAmount = baseDepositPerUnit * qty
+  const qty = isJetRental ? Math.max(1, Number(quantity) || 1) : 1
+  // Jet ski/car deposits are hourly — a 2-hour rental holds the spot for twice
+  // as long, so it charges 2x the deposit. Yacht deposits are a flat rate for
+  // the whole (fixed-length) charter, not hourly, so they're left out of this.
+  const hrs = isJetRental ? Math.max(1, Number(hours) || 1) : 1
+  const depositAmount = baseDepositPerUnit * qty * hrs
   const serviceName = SERVICE_LABELS[service] ?? service
   const fullTotal = Number(totalPrice) || depositAmount
   const balanceOwed = Math.max(0, fullTotal - depositAmount)

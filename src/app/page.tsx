@@ -347,7 +347,7 @@ export default function HomePage() {
                 </div>
                 <div className="absolute top-4 right-4">
                   <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.1em] text-[#00E5CC] border border-[#F0A022]/400/30 bg-black/50 backdrop-blur-sm">
-                    $80 deposit
+                    $100 deposit
                   </span>
                 </div>
               </div>

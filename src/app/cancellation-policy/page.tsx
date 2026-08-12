@@ -165,7 +165,7 @@ export default function CancellationPolicyPage() {
             <BulletItem dotColor="bg-pink-500">
               Jet Ski Rental: <strong className="text-white font-semibold">$40 deposit</strong>
               {" "}|{" "}
-              Jet Car Rental: <strong className="text-white font-semibold">$80 deposit</strong>
+              Jet Car Rental: <strong className="text-white font-semibold">$100 deposit</strong>
             </BulletItem>
             <BulletItem dotColor="bg-pink-500">
               Yacht Charters: deposit amount communicated at time of booking
@@ -212,6 +212,9 @@ export default function CancellationPolicyPage() {
           >
             <BulletItem dotColor="bg-orange-500">
               If you arrive late, your session may be shortened at the operator&apos;s discretion
+            </BulletItem>
+            <BulletItem dotColor="bg-orange-500">
+              Late arrivals are subject to a <strong className="text-white font-semibold">$25 late fee</strong>
             </BulletItem>
             <BulletItem dotColor="bg-orange-500">
               If you miss your reservation entirely without notice, your <strong className="text-white font-semibold">deposit is forfeited</strong>

@@ -188,8 +188,14 @@ function calcTotal(s: BookState): number {
 }
 
 function calcDeposit(s: BookState): number {
-  if (s.experience === "jet-ski") return 40;
-  if (s.experience === "jet-car") return 80;
+  if (s.experience === "jet-ski") {
+    const perUnitPerHour = s.riderType === "double" ? 70 : 40;
+    return perUnitPerHour * s.quantity * s.hours;
+  }
+  if (s.experience === "jet-car") {
+    const perUnitPerHour = 100;
+    return perUnitPerHour * s.quantity * s.hours;
+  }
   if (s.experience === "yacht") {
     const y = YACHTS.find((y) => y.id === s.yachtId);
     return y ? y.deposit : 0;
