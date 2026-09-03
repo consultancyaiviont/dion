@@ -93,6 +93,26 @@ interface StripeInvoice {
   due_date: number | null;
   hosted_invoice_url: string | null;
 }
+interface StripeCharge {
+  id: string;
+  amount: number;
+  status: string;
+  created: number;
+  disputed: boolean;
+  refunded: boolean;
+  billing_details?: { name?: string | null; email?: string | null };
+  receipt_email?: string | null;
+  description?: string | null;
+}
+interface StripeDispute {
+  id: string;
+  amount: number;
+  status: string;
+  reason: string;
+  created: number;
+  evidence_details?: { due_by: number | null; has_evidence: boolean; past_due: boolean };
+  charge: StripeCharge | string | null;
+}
 
 function padZ(n: number) { return String(n).padStart(2, "0"); }
 
@@ -176,6 +196,8 @@ export default function AdminDashboard() {
   const [stripeBalance, setStripeBalance] = useState<StripeBalance | null>(null);
   const [stripePayouts, setStripePayouts] = useState<StripePayout[]>([]);
   const [stripeInvoices, setStripeInvoices] = useState<StripeInvoice[]>([]);
+  const [stripeCharges, setStripeCharges] = useState<StripeCharge[]>([]);
+  const [stripeDisputes, setStripeDisputes] = useState<StripeDispute[]>([]);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
 
@@ -220,6 +242,8 @@ export default function AdminDashboard() {
       setStripeBalance(data.balance ?? null);
       setStripePayouts(data.payouts ?? []);
       setStripeInvoices(data.invoices ?? []);
+      setStripeCharges(data.charges ?? []);
+      setStripeDisputes(data.disputes ?? []);
     }
     setStripeLoading(false);
   }, []);
@@ -925,6 +949,47 @@ export default function AdminDashboard() {
 
             {!stripeLoading && stripeConfigured && !stripeError && (
               <>
+                {/* Disputes — shown first, above everything else. A dispute
+                    was previously invisible in this dashboard entirely
+                    (only Invoices were fetched; a disputed Payment Link
+                    charge never showed up here at all). */}
+                {stripeDisputes.length > 0 && (
+                  <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-5">
+                    <p className="text-red-400 font-black text-xs uppercase tracking-widest mb-3">
+                      {stripeDisputes.length} Dispute{stripeDisputes.length > 1 ? "s" : ""}
+                    </p>
+                    <div className="space-y-3">
+                      {stripeDisputes.map(d => {
+                        const charge = typeof d.charge === "object" ? d.charge : null;
+                        const dueBy = d.evidence_details?.due_by;
+                        return (
+                          <a key={d.id} href="https://dashboard.stripe.com/disputes" target="_blank" rel="noreferrer"
+                            className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-red-500/30 transition-all">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="text-white font-bold text-sm">{fmtCents(d.amount)} — {d.reason.replace(/_/g, " ")}</p>
+                                <p className="text-white/40 text-xs mt-0.5 truncate">
+                                  {charge?.billing_details?.name || charge?.receipt_email || "Unknown customer"}
+                                </p>
+                                <p className="text-white/30 text-[11px] mt-1">
+                                  {d.evidence_details?.has_evidence
+                                    ? `Evidence submitted — ${dueBy ? `decision by ${fmtTimestamp(dueBy)}` : "awaiting review"}`
+                                    : dueBy
+                                      ? `Respond by ${fmtTimestamp(dueBy)}`
+                                      : "Needs response"}
+                                </p>
+                              </div>
+                              <span className={`shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full ${d.evidence_details?.has_evidence ? "bg-amber-500/15 text-amber-300 border border-amber-500/30" : "bg-red-500/15 text-red-300 border border-red-500/30"}`}>
+                                {d.status.replace(/_/g, " ")}
+                              </span>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Wallet */}
                 <div>
                   <p className="text-white/35 text-[10px] uppercase tracking-widest font-bold mb-3">Wallet</p>
@@ -971,6 +1036,38 @@ export default function AdminDashboard() {
                             {p.status}
                           </span>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent Payments — every charge, regardless of how it was
+                    collected (Payment Link, checkout, invoice, etc). The
+                    Invoices section below only ever shows Stripe Invoice
+                    objects, which a Payment Link checkout never creates. */}
+                {stripeCharges.length > 0 && (
+                  <div>
+                    <p className="text-white/35 text-[10px] uppercase tracking-widest font-bold mb-3">Recent Payments</p>
+                    <div className="space-y-2">
+                      {stripeCharges.map(c => (
+                        <a key={c.id} href={`https://dashboard.stripe.com/payments/${c.id}`} target="_blank" rel="noreferrer"
+                          className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.02] p-4 hover:border-white/20 transition-all">
+                          <div className="min-w-0">
+                            <p className="text-white text-sm font-bold">{fmtCents(c.amount)}</p>
+                            <p className="text-white/30 text-[11px] mt-0.5 truncate">
+                              {c.billing_details?.name || c.receipt_email || c.description || "Guest"} · {fmtTimestamp(c.created)}
+                            </p>
+                          </div>
+                          {c.disputed ? (
+                            <span className="shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full bg-red-500/15 text-red-300 border border-red-500/30">Disputed</span>
+                          ) : c.refunded ? (
+                            <span className="shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/8 text-white/40 border border-white/10">Refunded</span>
+                          ) : (
+                            <span className={`shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full ${c.status === "succeeded" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" : "bg-amber-500/15 text-amber-300 border border-amber-500/30"}`}>
+                              {c.status}
+                            </span>
+                          )}
+                        </a>
                       ))}
                     </div>
                   </div>
