@@ -237,6 +237,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Jet ski rentals are 1 hour only — enforced server-side too, not just
+    // the booking form's hour picker, so a direct API call can't request
+    // a multi-hour jet ski slot.
+    const isJetSki = getExperienceType(service) === 'jet-ski'
+    if (isJetSki) body.hours = 1
+
     // Normalise body so email templates get `name`
     const normBody = { ...body, name: fullName, fullName }
 

@@ -54,7 +54,9 @@ export async function POST(req: NextRequest) {
   // Jet ski/car deposits are hourly — a 2-hour rental holds the spot for twice
   // as long, so it charges 2x the deposit. Yacht deposits are a flat rate for
   // the whole (fixed-length) charter, not hourly, so they're left out of this.
-  const hrs = isJetRental ? Math.max(1, Number(hours) || 1) : 1
+  // Jet ski itself is a 1-hour-only rental (jet car still supports multiple
+  // hours), so it's clamped to exactly 1 regardless of what's sent.
+  const hrs = service === 'jet-ski' ? 1 : isJetRental ? Math.max(1, Number(hours) || 1) : 1
   const depositAmount = baseDepositPerUnit * qty * hrs
   const serviceName = SERVICE_LABELS[service] ?? service
   const fullTotal = Number(totalPrice) || depositAmount

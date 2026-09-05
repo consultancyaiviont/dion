@@ -270,6 +270,13 @@ export default function BookPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.riderType, state.experience]);
 
+  // Jet ski rentals are 1 hour only — force it back to 1 if a prior jet
+  // car selection (which supports multi-hour) left `hours` higher.
+  useEffect(() => {
+    if (state.experience === "jet-ski" && state.hours !== 1) upd("hours", 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.experience]);
+
   function goNext() {
     if (step === 1) {
       if (!state.experience) { setError("Please select an experience."); return; }
@@ -631,24 +638,32 @@ export default function BookPage() {
                 </div>
 
                 <div>
-                  <p className="text-white/50 text-xs uppercase tracking-widest font-semibold mb-4">
-                    How many hours?
-                  </p>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4].map((h) => (
-                      <button
-                        key={h}
-                        onClick={() => upd("hours", h)}
-                        className={`flex-1 py-4 rounded-xl font-black text-sm transition-all duration-200 ${
-                          state.hours === h
-                            ? "bg-[#00E5CC] text-black shadow-[0_0_20px_-6px_#00E5CC]"
-                            : "bg-white/5 border border-white/10 text-white/50 hover:bg-white/10"
-                        }`}
-                      >
-                        {h} hr{h > 1 ? "s" : ""}
-                      </button>
-                    ))}
-                  </div>
+                  {state.experience === "jet-ski" ? (
+                    <p className="text-white/50 text-xs uppercase tracking-widest font-semibold mb-4">
+                      Duration: 1 hour
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-white/50 text-xs uppercase tracking-widest font-semibold mb-4">
+                        How many hours?
+                      </p>
+                      <div className="flex gap-2">
+                        {[1, 2, 3, 4].map((h) => (
+                          <button
+                            key={h}
+                            onClick={() => upd("hours", h)}
+                            className={`flex-1 py-4 rounded-xl font-black text-sm transition-all duration-200 ${
+                              state.hours === h
+                                ? "bg-[#00E5CC] text-black shadow-[0_0_20px_-6px_#00E5CC]"
+                                : "bg-white/5 border border-white/10 text-white/50 hover:bg-white/10"
+                            }`}
+                          >
+                            {h} hr{h > 1 ? "s" : ""}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                   <div className="mt-5 rounded-xl bg-white/[0.03] border border-white/8 px-4 py-3 flex items-center justify-between">
                     <span className="text-white/40 text-xs">
                       {state.quantity} {state.experience === "jet-ski" ? "ski" : "car"}{state.quantity > 1 ? "s" : ""} × {state.hours} hr{state.hours > 1 ? "s" : ""} × ${state.experience === "jet-ski" ? (state.riderType === "double" ? "170" : "140") : "350"}/hr
