@@ -792,6 +792,68 @@ export default function HomePage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────
+          SECTION 7.5 — DOLPHIN SIGHTINGS & DRONE FOOTAGE
+      ───────────────────────────────────────────────────────────────────── */}
+      <section className="py-14 md:py-28 bg-[#071624] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#00E5CC08_0%,_transparent_70%)] pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-5 md:px-10 relative z-10">
+
+          {/* Dolphin sightings */}
+          <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-center mb-20 md:mb-28">
+            <div className="order-1 grid grid-cols-2 gap-4">
+              {["/videos/dolphin-1.mp4", "/videos/dolphin-2.mp4"].map((src) => (
+                <div key={src} className="relative rounded-xl overflow-hidden bg-black" style={{ aspectRatio: "9/16" }}>
+                  <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+            <div className="order-2">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#00FFFF] font-semibold mb-4">Wildlife Encounters</p>
+              <h2 className="font-black uppercase tracking-[0.05em] leading-[0.95] text-3xl md:text-4xl text-white mb-4">
+                You Never Know Who You&apos;ll Meet 🐬
+              </h2>
+              <p className="text-white/50 text-base md:text-lg leading-relaxed">
+                Dolphin sightings are possible while exploring Miami&apos;s waters.
+              </p>
+            </div>
+          </div>
+
+          {/* Drone footage */}
+          <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-center">
+            <div className="order-2 md:order-1">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#00FFFF] font-semibold mb-4">Aerial Footage</p>
+              <h2 className="font-black uppercase tracking-[0.05em] leading-[0.95] text-3xl md:text-4xl text-white mb-4">
+                Capture Your Experience From Above
+              </h2>
+              <p className="text-white/50 text-base md:text-lg leading-relaxed">
+                Drone photos &amp; videos available — ask about adding drone footage to your experience.
+              </p>
+            </div>
+            <div className="order-1 md:order-2 grid grid-cols-2 gap-4">
+              {["/videos/drone-1.mp4", "/videos/drone-2.mp4"].map((src) => (
+                <div key={src} className="relative rounded-xl overflow-hidden bg-black" style={{ aspectRatio: "16/9" }}>
+                  <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Book Now */}
+          <div className="text-center mt-16 md:mt-20">
+            <Link
+              href="/book"
+              className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 font-bold uppercase tracking-[0.12em] text-black bg-gradient-to-r from-[#00E5CC] to-[#00BFFF] shadow-[0_0_40px_-8px_#00E5CC] hover:scale-[1.03] active:scale-[0.97] transition-transform duration-200 text-sm"
+            >
+              BOOK NOW
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────
           SECTION 8 — BOATING LICENSE INFO
       ───────────────────────────────────────────────────────────────────── */}
       <section className="py-10 md:py-20 bg-[#050D14] relative overflow-hidden">
